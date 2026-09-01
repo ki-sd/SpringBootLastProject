@@ -1,0 +1,64 @@
+# port => default : 8080
+# Spring => 데이터베이스 (Datasource)
+server:
+  port: 9090
+  servlet: 
+    context-path: /
+
+spring:
+  application:
+    name: SpringBootLastProject
+
+#  kafka:
+#    bootstrap-servers: localhost:9092
+#    producer: # Kafka로 메세지를 보내는 Producer 설정
+#      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Key = String 형태로 변환
+#      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # ChatMessage => 객체를 JSON형태로 변환 = Kafka로 전송
+#
+#    consumer: # 메세지를 읽는 Consumer 클래스 생성
+#      group-id: notification-group
+#      auto-offset-reset: earliest # 저장된 Offset이 없으면 가장 오래된 메세지부터 읽는다
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Key = String 형태로 변환
+#      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer # JSON 변경
+#      properties:
+#        "[spring.json.trusted.packages]": com.sist.web.vo
+## Listener => JSON 역직렬화
+#    listener:
+#      ack-mode: record # 메세지 1개 (record) 처리 후 => Offset Commit
+
+  datasource:
+    url: ${COMMDB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+
+#  ai:
+#    google:
+#      genai:
+#        api-key: 
+
+  jpa:
+    database: oracle
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql: true
+        user_sql_comments: true
+#        => JPA / MyBatis / ThymeLeaf
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    prefix: classpath:templates/
+    suffix: .html
+    mode: HTML
+mybatis:
+  type-aliases-package: com.sist.web.vo
+  mapper-locations: mybatis/mapper/*.xml
+# logging
+logging: 
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
+# security
+# spring ai
+# websocket => kafka
