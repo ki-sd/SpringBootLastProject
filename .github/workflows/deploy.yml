@@ -9,10 +9,10 @@ jobs:
    steps:
    # 코드 체크
     - name: Checkout:repository
-      uses: actions/checktout@v2
+      uses: actions/checktout@v4
    # JDK 설정
     - name: Setup JDK 21
-      uses: action/setup-java@v1
+      uses: action/setup-java@v4
       with:
         java-version: '21'
    # Gradle 권한 부여
