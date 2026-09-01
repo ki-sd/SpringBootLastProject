@@ -49,4 +49,6 @@ jobs:
           pkill -f 'java -jar' || true
           nohup java -jar ~/app/SpringBootLastProject-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
         EOF
+      env:
+         RUNNER_TRACKING_ID: ""
    # 9090 포트 재구동 => docker run
