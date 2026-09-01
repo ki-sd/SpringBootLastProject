@@ -46,7 +46,8 @@ jobs:
     - name: Run command
       run: |
         ssh -i ~/.ssh/id_ed25519 ubuntu@15.164.250.210 << 'EOF'
-          pkill -f 'java -jar' || true
+          pkill -f 'java -jar' || true 
+          source .env
           nohup java -jar ~/app/SpringBootLastProject-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
         EOF
       env:
