@@ -1,0 +1,51 @@
+name: Deploy to AWS Server
+on: 
+  push:
+   branches: 
+     -main #main commit and push
+jobs:
+  build:
+   runs-on: ubuntu-latest
+   steps:
+   # 코드 체크
+    - name: Checkout:repository
+      uses: actions/checktout@v2
+   # JDK 설정
+    - name: Setup JDK 21
+      uses: action/setup-java@v1
+      with:
+        java-version: '21'
+   # Gradle 권한 부여
+    - name: Set gradlew permission
+      run: |
+        chmod +x ./gradlew
+   # Gradle 빌드
+    - name: Build with Gradlew
+      run: ./gradlew clean build -x test
+   # AWS 연결
+    - name: Set SSH key Permission
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{secrets.SERVER_SSH_KEY}}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+   # AWS SSH Key
+    - name: Add SSH Key
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key:${{secrets.SERVER_SSH_KEY}}
+   # Add Known_host
+    - name: Add Known_Hosts
+      run: |
+        ssh-keyscan -H ed25519 15.164.250.210 >> ~/.ssh/known_hosts
+   # Jar파일 AWS로 전송 => docker이미지
+    - name: Deploy to Server with rsync
+      run: |
+        rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@15.164.250.210:~/app
+   # 9090 포트 Kill => container 삭제
+    - name: Run command
+      run: |
+        ssh -i ~/.ssh/id_ed25519 ubuntu@15.164.250.210 << 'EOF'
+          pkill -f 'java -jar' || true
+          nohup java -jar ~/app/SpringBootLastProject-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
+          EOF
+   # 9090 포트 재구동 => docker run
