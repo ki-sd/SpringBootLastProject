@@ -53,7 +53,7 @@ spring:
     mode: HTML
 mybatis:
   type-aliases-package: com.sist.web.vo
-  mapper-locations: mybatis/mapper/*.xml
+#  mapper-locations: mybatis/mapper/*.xml
 # logging
 logging: 
   level:
