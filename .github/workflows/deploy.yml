@@ -64,22 +64,16 @@ jobs:
        uses: webfactory/ssh-agent@v0.5.3
        with:
          ssh-private-key: ${{secrets.SERVER_SSH_KEY}}
-     # Add Known_hosts
+     # Add Known_hosts (AWS IP주소)
      - name: Add Known_hosts
        run: |
-         ssh-keyscan -H ed25519 3.35.16.223 >> ~/.ssh/known_hosts
+         ssh-keyscan -H ed25519 3.39.226.126 >> ~/.ssh/known_hosts
      # Docker Hub 이미지 Pull
-     - name: Deploy to Server with rsync 
+     - name: Deploy DockerHub Image on Server
        run: |
-         rsync -avz -e "ssh -o StrictHostKeyChecking=no" build/libs/*.jar ubuntu@15.164.250.210:~/app
-     # 9090 포트 Kill => container 삭제 
-     - name: Run command 
-       run: |
-         ssh -i ~/.ssh/id_ed25519 ubuntu@15.164.250.210 << 'EOF'
-           cd ~/app &&
-           set -a &&
-           source .env &&
-           set +a &&
-           nohup java -jar ~/app/BootLastProject-0.0.1-SNAPSHOT.jar > log.txt 2>&1 &
-         EOF
-     # 9090 포트 다시 구동 => docker run
+         ssh ubuntu@3.39.226.126 << 'EOF'
+         docker stop last-app ||true
+         docker rm last-app ||true
+         docker pull ${{secrets.DOCKER_NAME}}/last-app:latest
+         docker run -d --name last-app -p 9090:9090 ${{secrets.DOCKER_NAME}}/last-app:latest
+      EOF
