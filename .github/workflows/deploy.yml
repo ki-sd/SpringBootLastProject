@@ -70,7 +70,7 @@ jobs:
          touch .env
          echo "COMMDB_URL=${{secrets.DB_URL}}" >> ~/app/.env
          echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> ~/app/.env
-         echo "DB_USERPASSWORDE=${{secrets.DB_USERPASSWORD}}" >> ~/app/.env
+         echo "DB_USERPASSWORDE=${{secrets.DB_PASSWORD}}" >> ~/app/.env
          chmod 600 ~/app/.env
          EOF
      # Docker Hub 이미지 Pull
