@@ -76,7 +76,7 @@ jobs:
      # Docker-Compose 실행
      - name: SCP docker-compose
        run: |
-         ssh ubuntu@3.39.226.126 "mkdir -p /home/ubuntu.app"
+         ssh ubuntu@3.39.226.126 "mkdir -p /home/ubuntu/app"
          scp docker-compose.yml ubuntu@3.39.226.126:/home/ubuntu/app/docker-compose.yml
      # Docker Hub 이미지 Pull
      - name: Deploy DockerHub Image on Server
