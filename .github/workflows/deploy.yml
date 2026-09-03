@@ -47,7 +47,7 @@ jobs:
      - name: Build Docker Image
        run: |
          docker build \
-         -t ${{secrets.DOCKER_NAME}}/last-app:latest
+         -t ${{secrets.DOCKER_NAME}}/last-app:latest .
      # Docker Hub 업로드
      - name: Push Docker Image
        run: |
