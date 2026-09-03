@@ -68,6 +68,10 @@ jobs:
      - name: Add Known_hosts
        run: |
          ssh-keyscan -H ed25519 3.39.226.126 >> ~/.ssh/known_hosts
+     # .env 파일 AWS에 전송
+     - name: Copy .env to Server
+       run: |
+        scp .env ubuntu@3.39.226.126:~/.env
      # Docker Hub 이미지 Pull
      - name: Deploy DockerHub Image on Server
        run: |
@@ -75,5 +79,5 @@ jobs:
          docker stop last-app ||true
          docker rm last-app ||true
          docker pull ${{secrets.DOCKER_NAME}}/last-app:latest
-         docker run -d --name last-app -p 9090:9090 --env-file .env ${{secrets.DOCKER_NAME}}/last-app:latest
+         docker run -d --name last-app -p 9090:9090 --env-file ~/.env ${{secrets.DOCKER_NAME}}/last-app:latest
          EOF
