@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  app:
+   build: .
+   image: ${DOCKER_NAME}/last-app:latest
+   container_name: last-app
+   ports:
+    - "9090:9090"
+   env_file:
+    - .env
+   restart: always

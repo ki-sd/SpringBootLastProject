@@ -20,9 +20,9 @@
 </head>
 <body>
 
-<th:block th:include="/edu/main/header"></th:block>
-<th:block th:include="${main_html}"></th:block>
-<th:block th:include="/edu/main/footer"></th:block>
+<th:block th:insert="~{edu/main/header}"></th:block>
+<th:block th:insert="${main_html}"></th:block>
+<th:block th:insert="~{edu/main/footer}"></th:block>
 
 </body>
 </html>
