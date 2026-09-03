@@ -73,12 +73,17 @@ jobs:
          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> ~/app/.env
          chmod 600 ~/app/.env
          EOF
+     # Docker-Compose 실행
+     - name: SCP docker-compose
+       run: |
+         ssh ubuntu@3.39.226.126 "mkdir -p /home/ubuntu.app"
+         scp docker-compose.yml ubuntu@3.39.226.126:/home/ubuntu/app/docker-compose.yml
      # Docker Hub 이미지 Pull
      - name: Deploy DockerHub Image on Server
        run: |
          ssh ubuntu@3.39.226.126 << 'EOF'
-         docker stop last-app ||true
-         docker rm last-app ||true
-         docker pull ${{secrets.DOCKER_NAME}}/last-app:latest
-         docker run -d --name last-app -p 9090:9090 --env-file ~/app/.env ${{secrets.DOCKER_NAME}}/last-app:latest
+         cd /home/ubuntu/app
+         docker-compose pull
+         docker-compose down
+         docker-compose up -d
          EOF
