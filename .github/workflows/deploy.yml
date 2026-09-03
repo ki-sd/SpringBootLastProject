@@ -21,14 +21,6 @@ jobs:
          distribution: 'temurin'
          java-version: '21'
      # 환경 설정
-     # DB관련 => .env
-     - name: Set Environment
-       run: |
-         rm -f .env
-         touch .env
-         echo "COMMDB_URL=${{secrets.DB_URL}}" >> .env
-         echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> .env
-         echo "DB_USERPASSWORDE=${{secrets.DB_USERPASSWORD}}" >> .env
      # Gradlew 권한 부여 
      - name: Set gradlew permission
        run: |
@@ -67,11 +59,20 @@ jobs:
      # Add Known_hosts (AWS IP주소)
      - name: Add Known_hosts
        run: |
-         ssh-keyscan -H ed25519 3.39.226.126 >> ~/.ssh/known_hosts
-     # .env 파일 AWS에 전송
-     - name: Copy .env to Server
+         ssh-keyscan -H 3.39.226.126 >> ~/.ssh/known_hosts
+     # DB관련 => .env
+     - name: Set Environment
        run: |
-        scp .env ubuntu@3.39.226.126:~/.env
+         ssh ubuntu@3.39.226.126 << EOF
+         mkdir -p ~/app
+         cd ~/app
+         rm -f .env
+         touch .env
+         echo "COMMDB_URL=${{secrets.DB_URL}}" >> ~/app/.env
+         echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> ~/app/.env
+         echo "DB_USERPASSWORDE=${{secrets.DB_USERPASSWORD}}" >> ~/app/.env
+         chmod 600 ~/app/.env
+         EOF
      # Docker Hub 이미지 Pull
      - name: Deploy DockerHub Image on Server
        run: |
@@ -79,5 +80,5 @@ jobs:
          docker stop last-app ||true
          docker rm last-app ||true
          docker pull ${{secrets.DOCKER_NAME}}/last-app:latest
-         docker run -d --name last-app -p 9090:9090 --env-file ~/.env ${{secrets.DOCKER_NAME}}/last-app:latest
+         docker run -d --name last-app -p 9090:9090 --env-file ~/app/.env ${{secrets.DOCKER_NAME}}/last-app:latest
          EOF
